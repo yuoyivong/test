@@ -1,0 +1,838 @@
+{
+  "payload": [
+    {
+      "user": {
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTHDRlp-KGr_M94k_oor4Odjn2UzbAS7n1YoA&s",
+        "name": "Terrian Leniester",
+        "date": "12 Oct 2024",
+        "cmt": 5
+      },
+      "doc": [
+        {
+          "id": "92d94798-6610-40a0-aebc-9d4ac919a049",
+          "type": "procode",
+          "props": {
+            "data": "const javaScript",
+            "language": "javascript"
+          },
+          "children": []
+        },
+        {
+          "id": "09f2fe22-a60b-4a48-987d-18793e43a0e9",
+          "type": "procode",
+          "props": {
+            "data": "const JavaCode",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "default-block",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "eb90d21b-ac79-4857-bd80-c368029a491a",
+          "type": "heading",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left",
+            "level": 1
+          },
+          "content": [
+            {
+              "type": "link",
+              "href": "https://stackoverflow.com/questions/79131841/springboot-with-jdbctemplate-reading-100-column-eventually-turn-into-resultset",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Springboot with JdbcTemplate reading 100 column eventually turn into 'Resultset is closed'",
+                  "styles": {}
+                }
+              ]
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "494b4e95-2217-4410-bded-cc653336cc5b",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Here is my code snippets",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "4baef35b-1df7-441f-be85-5100c2f4f98c",
+          "type": "procode",
+          "props": {
+            "data": "package com.org.repository;\n\nimport com.org.config.datasourceconfig.DataSourceConfig;\nimport com.org.domain.transformer.SimpleMapper;\nimport com.org.infra.projection.SimpleProjection;\nimport lombok.extern.slf4j.Slf4j;\nimport org.springframework.stereotype.Repository;\n\nimport java.util.*;\n\n\n\n@Slf4j\n@Repository\npublic class MyJDBCRepository extends AbstractJdbcRepository {\n\n    public MyJDBCRepository(DataSourceConfig dataSourceConfig) {\n        super(dataSourceConfig);\n    }\n\n    public SimpleProjection findBy(\n            Integer search1,\n            Integer search2){\n        String query = SQL_QUERY;\n\n        boolean hasCondition = query.toLowerCase(Locale.ROOT).contains(\"where\");\n        StringBuilder queryBuilder = new StringBuilder(query);\n\n        hasCondition = appendEqualToClause(queryBuilder, hasCondition,  \"a.column1\", search1);\n        hasCondition = appendEqualToClause(queryBuilder, hasCondition,  \"a.column2 \", search2);\n        \n\n        queryBuilder.append(\" limit 1\");//TODO: This is temp change since we dont have `TimeStamp` type of column in reporting tables.\n\n        log.info(\"createPreparedStatement [SQL Query]: {} \", queryBuilder);\n\n        List<Object> params = new ArrayList<>();\n        if (search1!= null) {\n            params.add(search1);\n        }\n        if (search1 != null) {\n            params.add(search2);\n        }\n        \n        try {\n            return getReadJdbcTemplate().queryForObject(queryBuilder.toString(), params.toArray(), new SimpleMapper());\n        } catch (Exception e) {\n            log.error(\"Exception in searchApplications Query: {}\", e.getMessage(), e);\n        }\n        return null;\n    }\n}\n\npublic static boolean appendEqualToClause(StringBuilder queryBuilder, boolean hasCondition, String columnName, Object value) {\n        if (value != null) {\n            queryBuilder.append(hasCondition ? \" AND \" : \" WHERE \")\n                    .append(columnName)\n                    .append(\" = ?\");\n            return true; // Return true to update hasCondition\n        }\n        return hasCondition; // If no condition is added, return the same value\n    }\n",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "938a8d42-c388-428d-a1d0-2cbdd82e95ae",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "This is Mapper",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "8e874803-33a5-4f42-a4bc-25553398e447",
+          "type": "procode",
+          "props": {
+            "data": "package com.org.domain.transformer;\n\nimport com.org.infra.projection.SimpleProjection;\nimport lombok.extern.slf4j.Slf4j;\nimport org.springframework.jdbc.core.RowMapper;\n\nimport java.sql.ResultSet;\nimport java.sql.SQLException;\n\n@Slf4j\npublic class SimpleMapper implements RowMapper<SimpleProjection> {\n\n    @Override\n    public SimpleProjection mapRow(ResultSet rs, int rowNum) throws SQLException {\n        return new SimpleProjection() {\n            @Override\n            public Long getColumn1() {\n                try {\n                    return rs.getLong(\"column1\");\n                } catch (SQLException e) {\n                    log.error(\"1. Reading column name failed : {}\", e.getMessage());\n                    return null;\n                }\n            }\n\n            @Override\n            public String getColumn2() {\n                try {\n                    return rs.getString(\"column2\");\n                } catch (SQLException e) {\n                    log.error(\"2. Reading column name failed : {}\", e.getMessage());\n                    return null;\n                }\n            }\n\n            :: ::\n            :: ::\n\n            @Override\n            public Integer getColumn99() {\n                try {\n                    return rs.getInt(\"column99\");\n                } catch (SQLException e) {\n                    log.error(\"99. Reading column name failed : {}\", e.getMessage());\n                    return null;\n                }\n            }\n\n            @Override\n            public Integer getColumn100() {\n                try {\n                    return rs.getInt(\"column100\");\n                } catch (SQLException e) {\n                    log.error(\"100. Reading column name failed : {}\", e.getMessage());\n                    return null;\n                }\n            }\n        };\n    }\n}\n",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "610e8f5c-fc61-4bd0-a189-0d66585d2056",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Note: I havent written entire class because it is too much huge in lines so simplified only",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1b54e9be-3f67-4ea4-86f7-a591d18e2132",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Projection interface",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "925a6174-0436-406f-ae07-d43d57fae037",
+          "type": "procode",
+          "props": {
+            "data": "package com.org.infra.projection;\n\npublic interface SimpleProjection {\n\n    Integer getColumn1();\n    Integer getColumn2();\n    \n    :: ::\n    :: ::\n    \n    Integer getColumn99();\n    Integer getColumn100();\n}\n",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "194b916c-8ef1-4ab1-9eb9-d93ee860cc4a",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "while execution I am getting",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "a56e36c1-9992-4e99-9401-c9892fa4b0a3",
+          "type": "numberedListItem",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Reading column name failed : This ResultSet is closed.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "68d2eace-7892-4c75-ae12-eb21823e2a1a",
+          "type": "numberedListItem",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Reading column name failed : This ResultSet is closed.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "077eb448-86a5-4d53-8240-298b22c8532c",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "What I did is comment out or dint read after 50th column, and for those it is giving me data, from 41st column it is giving me an error \"Resultset is Closed\" this is my finding.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "ea312ee2-550f-46f4-baa9-2af23cfec433",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Any help or let me know whats wrong I am doing here ?",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "866bfe27-90d6-4a5c-84c7-e4ec8825698e",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "user": {
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTxctjU21pUENIsGN1F4qY21P7GfdEbhTMp2g&s",
+        "name": "Sensa Stark",
+        "date": "04 Oct 2024",
+        "cmt": 1
+      },
+      "doc": [
+        {
+          "id": "0e1dced1-1764-42be-9d25-7660c5c40975",
+          "type": "heading",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left",
+            "level": 1
+          },
+          "content": [
+            {
+              "type": "link",
+              "href": "https://stackoverflow.com/questions/79131712/compilation-issues-in-macos",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Compilation issues in MacOs",
+                  "styles": {}
+                }
+              ]
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "41cc6950-545d-4717-a238-f8be6d683fa8",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "I am currently developing a microservice application and so far I have been using Windows 10. However, recently I have changed my set up into mac. After installing Java + Maven and trying to compile the projects, I am experiencing compilation issues on most of them. 2 of them compile without issues, but the others are having issues with lombok or other dependencies that are working in Windows.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "d41e0cd8-e0b1-4552-a435-235698533c7a",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Here is an example of one of the compilation issues. This one is related to the annotations of lombok that are not being picked up in compilation:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "8fd2b6b4-d649-479b-9d52-662966e1a724",
+          "type": "procode",
+          "props": {
+            "data": "import lombok.Getter;\nimport lombok.Setter;\n\n@Getter\n@Setter\npublic class ExtendedMktQuote {\n  private String type;\n  private String source;\n  private String last;\n  private String last_timedate;\n  private String last_time;\n  private String change;\n  private String change_pct;\n  private String volume;\n  private String volume_alt;\n  private String changetype;\n}",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "a231f9bb-f333-40cb-bf0f-3bf8448ba8d0",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "When compiling I have this error for all of the parameters:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "19091546-fb13-4e46-a433-81e659396ad2",
+          "type": "procode",
+          "props": {
+            "data": "[ERROR]   location: variable quoteResponse of type EAS.ExternalAPIService.ExternalAPIReplies.CNBCReplies.ExtendedMktQuote\n[ERROR] {pathRedacted}.java:[24,67] cannot find symbol\n[ERROR]   symbol:   method getType()",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "4bcf9988-e52a-4648-ba77-341c330d0877",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Here is an example of my pom file in the maven / lombok part:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1655e026-2238-4f27-b6ac-160db9fada8e",
+          "type": "procode",
+          "props": {
+            "data": "<dependency>\n    <groupId>org.projectlombok</groupId>\n    <artifactId>lombok</artifactId>\n    <optional>false</optional>\n    </dependency>\n    <build>\n    <plugins>\n        <plugin>\n            <groupId>org.springframework.boot</groupId>\n            <artifactId>spring-boot-maven-plugin</artifactId>\n            <configuration>\n                <excludes>\n                    <exclude>\n                        <groupId>org.projectlombok</groupId>\n                        <artifactId>lombok</artifactId>\n                    </exclude>\n                </excludes>\n            </configuration>\n        </plugin>\n    </plugins>\n    </build>",
+            "language": "yaml"
+          },
+          "children": []
+        },
+        {
+          "id": "53233bb7-4749-475b-990e-b7bf3f2381f5",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Other classes that use lombok for the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "@Getter",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " and ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "@Setter",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " are showing the same issues.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "d06bd71d-29ba-48ae-8257-288941dd79ba",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Is there any known issues like this with lombok in macOS? Can this be an issue with anything related to Java / Maven installation?",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "925f021c-c00b-4582-8cdd-2504e5e80932",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "On the pom I have already tried taken out the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "excludes",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " part on the build of the pom related to lombok, but issue remains the same.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "4653a17a-08e6-4c29-9f2c-f9ab676e42e3",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "user": {
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShZ75KKy6w0Rw_ExGPMO1ZcccgpjXaK-xKgQ&s",
+        "name": "Rock Stark",
+        "date": "03 Oct 2024",
+        "cmt": 0
+      },
+      "doc": [
+        {
+          "id": "1d154805-d974-404b-96d3-0ede24c3bea4",
+          "type": "heading",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left",
+            "level": 1
+          },
+          "content": [
+            {
+              "type": "link",
+              "href": "https://stackoverflow.com/questions/79131067/spring-boot-validation-problem-understanding-the-methodargumentnotvalidexceptio",
+              "content": [
+                {
+                  "type": "text",
+                  "text": "Spring boot validation problem: understanding the MethodArgumentNotValidException",
+                  "styles": {}
+                }
+              ]
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "67098e84-340b-43b5-84f4-fb15ae16d7d7",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "I have a problem when validating a form with Spring Boot. I have already found the cause of the problem (and know a possible solution), but I would like to understand why it happens.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "7802b9f5-21c4-45f4-95d3-815c81a2344e",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "In the controller that the post method reaches I have:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "54f92f50-1470-4dc3-b427-89b16a8a704c",
+          "type": "procode",
+          "props": {
+            "data": "@RequestMapping(value = \"/add\", method = RequestMethod.POST)\npublic String processAddNewEvent(@Valid @ModelAttribute(\"newEvent\") EventDto newEvent, @ModelAttribute(\"imageFile\") MultipartFile imageFile, BindingResult result, HttpServletRequest request) {\n\n    if(result.hasErrors()) {\n        return \"addEvent\";\n    }\n    \n    return \"redirect:/events\";\n}",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "ae199503-61fc-4cf3-a0fe-797e11a4afcf",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "What I want is just to validate the newEvent object. If it has errors, I show the \"addEvent\" form again with error messages.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1562d965-b0f1-47d6-ab6b-75647ec158fa",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "But in this method, I receive two parameters from the form: the newEvent object and a file (imageFile). When this is the case, as soon as this function is called I get a MethodArgumentNotValidException. However, if I remove the imageFile and only receive the newEvent object, then the exception doesn't get thrown and the validation works correctly.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "a8e34cb3-0c43-44b0-8b4c-daa3bb85dd3a",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "That is, if I the controller looks like this, the validation works and I don´t have exception:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "7d61b2f6-45ae-4e71-ba34-db41af02fec4",
+          "type": "procode",
+          "props": {
+            "data": "@RequestMapping(value = \"/add\", method = RequestMethod.POST)\npublic String processAddNewEvent(@Valid @ModelAttribute(\"newEvent\") EventDto newEvent, BindingResult result, HttpServletRequest request) {\n    if(result.hasErrors()) {\n        return \"addEvent\";\n    }\n    \n    return \"redirect:/events\";\n}",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "7eedf002-7ceb-40e2-816b-26fc57be4cf3",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "So, my questions are, Can validation be done on one object and not the other? Shouldn't I receive two different objects from the form? What would be the correct way to do so?",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "7e35c25c-0e80-4f75-85fa-0a50e39d0a32",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Thanks and sorry for my English!",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1ea0336c-e30a-4a48-9d6d-ec3141ed8cf2",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "My idea to solve it is to put the image file inside the newEvent class, and thus receive only one object. I still don't know if it will work. I just want to understand the problem well",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "8841c985-bf88-4912-a324-4f0cb04394ab",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "user": {
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQjw9i6PO7C3BluMusZzcQs2J7BWkF0pLSrRw&s",
+        "name": "Grey Worm",
+        "date": "01 Oct 2024",
+        "cmt": 220
+      },
+      "doc": [
+        {
+          "id": "8841c985-bf88-4912-a324-4f0cb04394ab",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Looking to this:",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1ab98648-f2de-4798-9ea0-b89eb654c6e8",
+          "type": "procode",
+          "props": {
+            "data": "public class AppConfig {\n\n  @Bean\n  DataSourceHandlerDelegate dataSourceHandlerDelegate(@Qualifier(\"DataSourceHandlerDelegate\") DataSourceHandler dynamoDBDataSourceHandler) {\n    return new DataSourceHandlerDelegate(dynamoDBDataSourceHandler);\n  }\n}",
+            "language": "java"
+          },
+          "children": []
+        },
+        {
+          "id": "2e8c6b04-eadc-47ed-9c69-e9330f40543e",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "It means that to create the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "dataSourceHandlerDelegate",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " is needed another a ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "DataSourceHandler",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " bean called ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "DataSourceHandlerDelegate",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": ". I don't know if this is really what you may have in your context, but I suppose that the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "DataSourceHandler",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " object that has to be managed through the delegate is qualified with another name, e.g. the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "dynamoDBDataSourceHandler",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " that is referenced as the constructor parameter in the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "DataSourceHandlerDelegate",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " class. Check your configuration for putting in the ",
+              "styles": {}
+            },
+            {
+              "type": "text",
+              "text": "@Qualifier",
+              "styles": {
+                "code": true
+              }
+            },
+            {
+              "type": "text",
+              "text": " annotation the right name of the handler bean.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "929e129e-5bbc-458a-95b5-d6c34a18b8a2",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

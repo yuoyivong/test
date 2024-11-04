@@ -1,0 +1,19 @@
+{
+    "payload": [
+        {
+            "tech": "Home"
+        },
+        {
+            "tech": "Spring Boot"
+        },
+        {
+            "tech": "NextJs"
+        },
+        {
+            "tech": "Tailwind"
+        },
+        {
+            "tech": "Gatsby"
+        }
+    ]
+}
