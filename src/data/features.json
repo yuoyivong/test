@@ -1,0 +1,29 @@
+{
+    "payload": [
+      {
+        "id": 1,
+        "logo": "1",
+        "title": "Toggle Switch Section",
+        "description": "StackNote’s Toggle Switch Section enables users to effortlessly switch between the note-taking and question-asking sections, offering a seamless and flexible experience tailored to their needs."
+      },
+      {
+        "id": 2,
+        "logo": "2",
+        "title": "Collaborative Workspaces",
+        "description": "Easily create, manage, and collaborate on documents with your team. Use the built-in Q&A section to ask questions and share answers, facilitating seamless teamwork and productivity."
+      },
+      {
+        "id": 3,
+        "logo": "3",
+        "title": "Advanced Search & Filtering",
+        "description": "Quickly find what you need by using our powerful search and filtering features. Organize and filter documents or questions by topic, tags, or relevance, ensuring you can easily access key information without the hassle of manual searching."
+      },
+      {
+        "id": 4,
+        "logo": "4",
+        "title": "Real-time Notifications",
+        "description": "Never miss important updates with real-time notifications. Receive alerts instantly when someone interacts with your documents or answers your questions, keeping you up-to-date and enhancing your workflow efficiency."
+      }
+    ]
+  }
+  

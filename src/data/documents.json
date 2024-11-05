@@ -1,0 +1,58 @@
+{
+  "payload" : [
+    {
+      "id" : 1,
+      "workspaceName" : "My Workspace",
+      "documents": [
+        {
+          "id": 1,
+          "title": "Docker Network",
+          "date": "Jan 7 2024",
+          "status": "public"
+        },
+        {
+          "id": 2,
+          "title": "Spring Advanced",
+          "date": "Jan 6 2024",
+          "status": "private"
+        }
+      ]
+    },
+    {
+      "id" : 2,
+      "workspaceName" : "HRD Workspace",
+      "documents": [
+        {
+          "id": 1,
+          "title": "Docker Network",
+          "date": "Jan 7 2024",
+          "status": "public"
+        }
+      ]
+    },
+    {
+      "id" : 3,
+      "workspaceName" : "SiemReap Workspace",
+      "documents": [
+        {
+          "id": 1,
+          "title": "Docker Network",
+          "date": "Jan 7 2024",
+          "status": "public"
+        }
+      ]
+    },
+    {
+      "id" : 4,
+      "workspaceName" : "ABA BANK",
+      "documents": [
+        {
+          "id": 1,
+          "title": "Docker Network",
+          "date": "Jan 7 2024",
+          "status": "public"
+        }
+      ]
+    }
+  ]
+}

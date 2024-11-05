@@ -1,0 +1,196 @@
+{
+  "payload": [
+    {
+      "id": 1,
+      "title": "Docker Network",
+      "doc": [
+        {
+          "id": "f7f0ddbc-8a39-4ad8-b234-8e6aecaa97ee",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Docker networks refers to the ability for container to connect to and communicate with each other or other container. Here is how to create bridge network",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "c5b6cf49-8b06-4018-94d7-09001c3098fa",
+          "type": "procode",
+          "props": {
+            "data": "docker network create -d bridge [network-name]"
+          },
+          "children": []
+        },
+        {
+          "id": "62c13d40-2df9-4155-a271-bce46284cafd",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "How to run both PostgreSQL and Spring Boot application on the same network",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "7e45da2f-e2d3-4845-b689-4de04146e230",
+          "type": "numberedListItem",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Set up PostgreSQL with the network you have created",
+              "styles": {}
+            }
+          ],
+          "children": [
+            {
+              "id": "588d8241-8518-4324-9ff1-8d0937b1ce7c",
+              "type": "procode",
+              "props": {
+                "data": "docker run --name [postgres-db-name] --network [your-network] -p [5433]:5432 -e\nPOSTGRES_USER=[postgres-username] -e\nPOSTGRES_PASSWORD=[postgres-password] -e\nPOSTGRES_DB=[postgres-database] -d postgres"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "0c4af963-d039-4b1c-bc72-7b691df753a5",
+          "type": "numberedListItem",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "Set environment for Docker container of the Spring Boot application",
+              "styles": {}
+            }
+          ],
+          "children": [
+            {
+              "id": "d005ed15-fb37-487b-88da-885676300918",
+              "type": "procode",
+              "props": {
+                "data": "docker run --name [spring-boot-app] --network [your-network] -p [8080]:8080 -e\nSPRING_DATASOURCE_URL=jdbc:postgresql://[postgres-db-name]:5432/[postgres-database] -e\nSPRING_DATASOURCE_USERNAME=[postgres-username] -e\nSPRING_DATASOURCE_PASSWORD=[postgres-password] -d your-spring-boot-image"
+              },
+              "children": []
+            }
+          ]
+        },
+        {
+          "id": "fc972c5a-2f0e-4d7e-9dd2-3d9fc1f413a9",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Spring Advanced",
+      "doc": [
+        {
+          "id": "ff0d7482-a46f-4fcf-ab6d-cc0d54021469",
+          "type": "heading",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left",
+            "level": 3
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "@OneToOne",
+              "styles": {
+                "bold": true
+              }
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "1f23a4b2-bbcc-4cbe-a632-228a073cc140",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "This annotation is used to define a one-to-one relationship between two entities. It means that one instance of an entity is associated with one instance of another entity.",
+              "styles": {}
+            }
+          ],
+          "children": []
+        },
+        {
+          "id": "f6f1619c-0a98-4a76-b1e1-98c2b3472f70",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        },
+        {
+          "id": "42307a1b-370e-42d5-85ac-59266a3d4b15",
+          "type": "procode",
+          "props": {
+            "data": "@Entity\npublic class Person {\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n\t\tprivate String name;\n    @OneToOne\n    @JoinColumn(name = \"address_id\")\n    private Address address;\n}\n"
+          },
+          "children": []
+        },
+        {
+          "id": "e8afeaa2-05a8-42ef-a549-2a38a90a714a",
+          "type": "procode",
+          "props": {
+            "data": "@Entity\npublic class Address {\n\n    @Id\n    @GeneratedValue(strategy = GenerationType.IDENTITY)\n    private Long id;\n    private String name;\n\n    @OneToOne(mappedBy = \"address\", fetch = FetchType.LAZY)\n    private Person person;\n\n}"
+          },
+          "children": []
+        },
+        {
+          "id": "9358ab62-bc8c-4945-bf16-cbb979dae684",
+          "type": "paragraph",
+          "props": {
+            "textColor": "default",
+            "backgroundColor": "default",
+            "textAlignment": "left"
+          },
+          "content": [],
+          "children": []
+        }
+      ]
+    }
+  ]
+}

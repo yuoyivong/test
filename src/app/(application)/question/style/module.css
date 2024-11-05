@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wght@200..900&display=swap');
+
+@font-face {
+    font-family: 'Consolas';
+    src: url('/fonts/CONSOLA.TTF');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.bn-editor {
+    padding: 0 1.5rem;
+}
+
+.bn-container[data-changing-font-demo] .bn-editor * {
+    font-family: "Nunito", sans-serif;
+}
+
+.bn-container[data-changing-font-demo] .cm-editor * {
+    font-family: "Consolas", "Inconsolata", monospace !important;
+    font-style: normal;
+}
+
+.bn-container[data-changing-font-demo] .cm-editor *::selection{
+    background-color: #344054 !important;
+    color: #ffffff;
+}
